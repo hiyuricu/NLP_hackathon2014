@@ -1,68 +1,43 @@
 #!/usr/bin/python
-# -*- coding: utf-8 -*-
+#-*-coding:utf-8-*-
+#2014/09/23 05:54:15 Shin Kanouchi
+"""
+入力
+出力
+"user_id","on_cid","p_topic_id"
+539152,3421425341923550212,1036212,"article_read"
+"""
+import sys, csv
 
-import sys
-import string
-import re
-import MeCab
-import math
-from collections import defaultdict
-
-#素性のリストをappendするリストなので形式はリストのリストとなる
-features_list = []
-
-X_value_dic_for_co_occur = defaultdict(int)
-Y_value_dic_for_co_occur = defaultdict(int)
-XY_value_dic_for_co_occur = defaultdict(int)
-
-#csvファイルを読み込むように設計されている
-def main(training_data,contentsdata):
-
-    character_inclusion(read_file)
-
-    wf = open('feature_for_paraphrase.txt',"w")
-    for features in features_list:
-            #事例に対する要素の数は一定でないので修正する必要があるかもしれない
-            wf.write("%s\t%s\t%s\n" % (features[0], features[3], features[4]))
-    wf.close()
-
-#文字の包含の素性。現状連続した文字が包含されているかどうかしか見ていない(ポケットモンスターがポケモンのように連続していない略語は0となる)
-def character_inclusion(read_file):
-    #Nは言い換えの数を表す。対数尤度比による共起度の素性を出すときのパラメータに使う
-    N = 0
-    for line in open(read_file,"r"):
-        N += 1
-
-    for line in open(read_file,"r"):
-        line = line.strip()
-        temporary_features_list = line.split(",")
-
-        if temporary_features_list[2] in temporary_features_list[1]:
-            temporary_features_list.append("1:1")
+i=0
+print '"user_id","on_cid","p_topic_id","Answer"'
+dataReader = csv.reader(open(sys.argv[1]))
+header = next(dataReader)
+ID_list = []
+on_cid_list = []
+one_topic_list = []
+time_list = []
+for one_data in dataReader:
+    ID_list.append(one_data[0])
+    on_cid_list.append(one_data[1])
+    one_topic_list.append(one_data[2])
+    time_list.append(one_data[4])
+    if len(time_list) < 3:
+        pass
+    elif len(time_list) < 5:
+        print '%s,%s,%s,"%s"' % (one_data[0],one_data[1],one_data[2], "NULL")
+    if len(time_list) == 5:
+        if on_cid_list[2] == on_cid_list[0] or on_cid_list[2] == on_cid_list[1] or on_cid_list[2] == on_cid_list[3] or on_cid_list[2] == on_cid_list[4]:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
+        elif ID_list[0] == ID_list[1] and ID_list[1] == ID_list[2] and ID_list[2] == ID_list[3] and ID_list[3] == ID_list[4]:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "NULL")
+        elif one_topic_list[0] == one_topic_list[1] and one_topic_list[1] == one_topic_list[2] and one_topic_list[2] == one_topic_list[3] and one_topic_list[3] == one_topic_list[4]:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "NULL")
         else:
-            #一事例に対して素性は一つはなければならないので一時的に1:0をappendするようにするが、本来0の素性はappendしない
-            temporary_features_list.append("1:0")
-        co_occur_value(temporary_features_list[1], temporary_features_list[2], temporary_features_list, N)
-        features_list.append(temporary_features_list)
-
-#対数尤度比による共起度の素性。     
-def co_occur_value(X, Y, temporary_features_list, N):
-    n11 = 0
-    n12 = 0
-    n21 = 0
-    n22 = 0
-    kay_square = 0
-    if X + Y in XY_value_dic_for_co_occur:
-        n11 = XY_value_dic_for_co_occur[X + Y]
-    if X in X_value_dic_for_co_occur:
-        n12 = X_value_dic_for_co_occur[X] - n11
-    if Y in Y_value_dic_for_co_occur:
-        n21 = Y_value_dic_for_co_occur[Y] - n11
-    n22 = N - n11 - n12 - n21
-    kay_square = N * (n11 * n22 - n12 * n21) * (n11 * n22 - n12 * n21) / ((n11 + n12) * (n21 + n22) * (n11 + n21) * (n12 + n22))
-    temporary_features_list.append("2:%s" % kay_square)
-
-
-
-if __name__ == "__main__":
-    main(sys.argv[1],sys.argv[2])
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
+        ID_list.pop(0)
+        on_cid_list.pop(0)
+        one_topic_list.pop(0)
+        time_list.pop(0)
+print '%s,%s,%s,"%s"' % (one_data[0],one_data[1],one_data[2], "NULL")
+print '%s,%s,%s,"%s"' % (one_data[0],one_data[1],one_data[2], "NULL")
