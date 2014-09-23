@@ -29,12 +29,14 @@ for one_data in dataReader:
     if len(time_list) == 5:
         if on_cid_list[2] == on_cid_list[0] or on_cid_list[2] == on_cid_list[1] or on_cid_list[2] == on_cid_list[3] or on_cid_list[2] == on_cid_list[4]:
             print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
-        elif ID_list[0] == ID_list[1] and ID_list[1] == ID_list[2] and ID_list[2] == ID_list[3] and ID_list[3] == ID_list[4]:
-            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "NULL")
-        elif one_topic_list[0] == one_topic_list[1] and one_topic_list[1] == one_topic_list[2] and one_topic_list[2] == one_topic_list[3] and one_topic_list[3] == one_topic_list[4]:
-            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "NULL")
-        else:
+        elif ID_list[2] != ID_list[1]:
             print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
+        elif one_topic_list[2] != one_topic_list[1]:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
+        elif time_list[2] != time_list[1]:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "article_read")
+        else:
+            print '%s,%s,%s,"%s"' % (ID_list[2],on_cid_list[2],one_topic_list[2], "NULL")
         ID_list.pop(0)
         on_cid_list.pop(0)
         one_topic_list.pop(0)
